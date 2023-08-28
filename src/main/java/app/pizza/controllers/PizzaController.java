@@ -3,6 +3,8 @@ package app.pizza.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,10 +13,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import app.pizza.persistence.entity.PizzaEntity;
 import app.pizza.services.PizzaService;
+import app.pizza.services.dto.UpdatePizzaPriceDto;
 
 @RestController
 @RequestMapping( "api/pizza")
@@ -24,8 +28,8 @@ public class PizzaController {
 
     
     @GetMapping
-    public ResponseEntity<List<PizzaEntity>> getAll(){
-        return ResponseEntity.ok().body(this.pizzaService.getAll());
+    public ResponseEntity<Page<PizzaEntity>> getAll(@RequestParam(defaultValue = "0") int page,@RequestParam(defaultValue = "10") int elements){
+        return ResponseEntity.ok().body(this.pizzaService.getAll( page, elements));
     }
     @GetMapping("/{id}")
     public ResponseEntity<PizzaEntity> getById(@PathVariable int id){
@@ -50,14 +54,22 @@ public class PizzaController {
         return ResponseEntity.ok().build();
     }
     @GetMapping("/available")
-    public ResponseEntity<List<PizzaEntity>> getAvailable(){
-        return ResponseEntity.ok().body(this.pizzaService.getAvailable());
+    public ResponseEntity<Page<PizzaEntity>> getAvailable(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int elements,
+        @RequestParam(defaultValue = "price") String sort
+    ){
+        return ResponseEntity.ok().body(this.pizzaService.getAvailable(page, elements, sort));
     }
     @GetMapping("/name/{name}")
     public ResponseEntity<PizzaEntity> getByName(@PathVariable String name){
         if(name==null || name.isEmpty()) return ResponseEntity.badRequest().build();
-        if(this.pizzaService.getByName(name)==null) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok().body(this.pizzaService.getByName(name));
+        try {
+            return ResponseEntity.ok().body(this.pizzaService.getByName(name));
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+       
     }
     @GetMapping("/name/containing/{name}")
     public ResponseEntity<List<PizzaEntity>> getByNameContaining(@PathVariable String name){
@@ -69,11 +81,18 @@ public class PizzaController {
         if(min<0 || max<0 || min>max) return ResponseEntity.badRequest().build();
         return ResponseEntity.ok().body(this.pizzaService.getByPriceBetween(min, max));
     }
-    @GetMapping("/description/notcontaining/{description}")
-    public ResponseEntity<List<PizzaEntity>> getByDescriptionNotContaining(@PathVariable String description){
-        if(description==null || description.isEmpty()) return ResponseEntity.badRequest().build();
-        return ResponseEntity.ok().body(this.pizzaService.getByDescriptionNotContaining(description));
+    @GetMapping("/price/top3/{price}")
+    public ResponseEntity<List<PizzaEntity>> getTop3ByPriceLessThanEqualOrderByPriceAsc(@PathVariable double price){
+        if(price<0) return ResponseEntity.badRequest().build();
+        return ResponseEntity.ok().body(this.pizzaService.getTop3ByPriceLessThanEqualOrderByPriceAsc(price));
     }
+    @PutMapping("/price")
+    public ResponseEntity<Void> updatePrice(@RequestBody UpdatePizzaPriceDto newPizzaPrice){
+        if(!this.pizzaService.exist(newPizzaPrice.getPizzaId()) || newPizzaPrice.getNewPrice()<0) return ResponseEntity.badRequest().build();
+        this.pizzaService.updatePrice(newPizzaPrice);
+        return ResponseEntity.ok().build();
+    }
+   
     
 
 }

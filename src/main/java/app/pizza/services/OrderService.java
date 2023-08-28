@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import app.pizza.persistence.entity.OrderEntity;
+import app.pizza.persistence.projection.OrderSummary;
 import app.pizza.persistence.repository.OrderRepository;
 
 @Service
@@ -20,5 +21,11 @@ public class OrderService {
     public List<OrderEntity> getByDate(){
         LocalDateTime date=LocalDateTime.now().minusDays(1);
         return this.orderRepository.findAllByDateAfter(date);
+    }
+    public List<OrderEntity> getCustomerOrders(String idCustomer){
+        return this.orderRepository.findCustomerOrders(idCustomer);
+    }
+    public OrderSummary getOrderSummary(int orderId){
+        return this.orderRepository.findSummary(orderId);
     }
 }

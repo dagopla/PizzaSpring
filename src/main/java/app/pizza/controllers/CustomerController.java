@@ -1,18 +1,32 @@
 package app.pizza.controllers;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import lombok.AllArgsConstructor;
+import app.pizza.persistence.entity.CustomerEntity;
+import app.pizza.services.CustomerService;
+
 
 @RestController
-@RequestMapping("/secciones")
-@AllArgsConstructor
+@RequestMapping("api/customer")
 public class CustomerController {
-    @GetMapping("")
-    public String getCostumer(){
-        return "hola";
+    @Autowired
+    private CustomerService customerService;
+
+    @GetMapping("/phone/{phone}")
+    public ResponseEntity<CustomerEntity> getCostumerByPhone(@PathVariable String phone){
+        if(phone==null ) return ResponseEntity.badRequest().build();
+        try {
+            System.out.println("phone: "+phone);
+            return ResponseEntity.ok().body(this.customerService.findByPhoneNumber(phone));
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+        
     }
 }
