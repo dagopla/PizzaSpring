@@ -5,10 +5,12 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import app.pizza.persistence.entity.OrderEntity;
 import app.pizza.persistence.projection.OrderSummary;
 import app.pizza.persistence.repository.OrderRepository;
+import app.pizza.services.dto.RandomOrderDto;
 
 @Service
 public class OrderService {
@@ -27,5 +29,9 @@ public class OrderService {
     }
     public OrderSummary getOrderSummary(int orderId){
         return this.orderRepository.findSummary(orderId);
+    }
+    @Transactional
+    public Boolean saveRandomOrder(RandomOrderDto randomOrderDto){
+        return this.orderRepository.saveRandomOrder(randomOrderDto.getIdCustomer(), randomOrderDto.getMethod());
     }
 }

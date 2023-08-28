@@ -2,7 +2,6 @@ package app.pizza.services;
 
 import java.util.List;
 
-import org.hibernate.sql.Update;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,8 +30,10 @@ public class PizzaService {
     public PizzaEntity getById(int id) {
         return this.pizzaRepository.findById(id).orElse(null);
     }
-    public void save(PizzaEntity pizzaEntity){
+    @Transactional
+    public PizzaEntity save(PizzaEntity pizzaEntity){
         this.pizzaRepository.save(pizzaEntity);
+        return pizzaEntity; 
     }
     public boolean exist(int id){
         return this.pizzaRepository.existsById(id);
