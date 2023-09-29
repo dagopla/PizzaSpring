@@ -1,4 +1,4 @@
-package app.pizza.controllers;
+package app.pizza.web.controllers;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,6 @@ public class CustomerController {
     public ResponseEntity<CustomerEntity> getCostumerByPhone(@PathVariable String phone){
         if(phone==null ) return ResponseEntity.badRequest().build();
         try {
-            System.out.println("phone: "+phone);
             return ResponseEntity.ok().body(this.customerService.findByPhoneNumber(phone));
         } catch (Exception e) {
             return ResponseEntity.notFound().build();

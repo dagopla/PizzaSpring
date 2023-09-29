@@ -1,4 +1,4 @@
-package app.pizza.controllers;
+package app.pizza.web.controllers;
 
 import java.util.List;
 
@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import app.pizza.persistence.entity.OrderEntity;
 import app.pizza.persistence.projection.OrderSummary;
 import app.pizza.services.OrderService;
-import jakarta.websocket.server.PathParam;
 @RestController
 @RequestMapping("api/order")
 public class OrderController {
