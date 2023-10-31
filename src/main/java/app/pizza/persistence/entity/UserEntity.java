@@ -1,26 +1,31 @@
 package app.pizza.persistence.entity;
 
+
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 // Entidad de usuario en una base de datos relacional con postgresql
 @Entity
+@Table(name = "user_pizza")
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "user_pizza")
 public class UserEntity {
+    // @Id
+    // @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // @Column(nullable = false)
+    // private Long id;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(length = 20, nullable = false)
-    private String id;
-
     @Column(nullable = false, length = 20)
     private String username;
 
@@ -34,4 +39,7 @@ public class UserEntity {
     private Boolean diseable;
     @Column(nullable = false, length = 50)
     private String email;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    private List<UserRoleEntity> roles;
 }
