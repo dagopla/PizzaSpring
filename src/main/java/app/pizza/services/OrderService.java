@@ -6,14 +6,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import app.pizza.persistence.entity.CustomerEntity;
 import app.pizza.persistence.entity.OrderEntity;
 import app.pizza.persistence.projection.OrderSummary;
 import app.pizza.persistence.repository.CustomerRepository;
 import app.pizza.persistence.repository.OrderRepository;
 import app.pizza.services.dto.RandomOrderDto;
-import jakarta.transaction.Transactional;
 
 @Service
 public class OrderService {
